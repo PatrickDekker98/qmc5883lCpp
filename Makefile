@@ -9,10 +9,10 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := aMagnetoMeter.cpp
+SOURCES := qmc5883l.cpp
 
 # header files in this project
-HEADERS := aMagnetoMeter.hpp
+HEADERS := qmc5883l.hpp
 
 # other places to look for files for this project
 SEARCH  := 
