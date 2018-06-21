@@ -4,8 +4,17 @@
 #include "hwlib.hpp"
 #include <array>
 #include <math.h>
-class qmc5883l
-{
+
+class magnetometer {
+public:
+    virtual void init()=0;
+    virtual void setMode(uint16_t mode,uint16_t odr,uint16_t rng,uint16_t osr)=0;
+    void readV(int16_t* x,int16_t* y,int16_t* z)=0;
+    int8_t readI(uint8_t reg)=0;
+
+}
+
+class qmc5883l{
 private:
     hwlib::i2c_bus & bus;
     uint_fast8_t address;
@@ -42,16 +51,33 @@ private:
     uint_fast8_t configStandby = 0x00;
     uint_fast8_t configContinue = 0x01;
 
+    int16_t xMin ;
+    int16_t xMax ;
+    int16_t yMin ;
+    int16_t yMax ;
+    int16_t zMin ;
+    int16_t zMax ;
+
     void writeReg(uint8_t reg, uint8_t val);
+    void updateVals(int16_t x, int16_t y,int16_t z);
 public:
     qmc5883l(hwlib::i2c_bus & bus, const uint_fast8_t & address = 0x0d);
 //    int16_t x = 0;
 //    int16_t y = 0;
 //    int16_t z = 0;
+    float Pi = 3.14159265358979323846264338327950288;
     void init();
+    void setDeclination();
     void setMode(uint16_t mode,uint16_t odr,uint16_t rng,uint16_t osr);
     void readV(int16_t* x,int16_t* y,int16_t* z);
+    void calibratedVals(int16_t* x, int16_t* y,int16_t* z);
     int8_t readI(uint8_t reg);
+    float azimuth(int16_t y, int16_t x);
+    float heading(int16_t* x,int16_t* y,int16_t* z);
+    int16_t getXmin();
+    int16_t getXmax();
+    int16_t getYmin();
+    int16_t getYmax();
 
 };
 
