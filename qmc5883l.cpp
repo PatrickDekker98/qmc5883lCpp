@@ -1,3 +1,15 @@
+// ==========================================================================
+//
+// File      : qmc5883l.cpp
+// Part of   : qmc5883l magnetic compass library 
+// Copyright : Patrick_Dekker@hotmail.com 2018
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// ==========================================================================
+
 #include "qmc5883l.hpp"
 #include <array>
 
@@ -16,20 +28,28 @@ void qmc5883l::writeReg(uint8_t reg, uint8_t val){
 
 void qmc5883l::init(){
     writeReg(reset1, 0x01);
-    setMode(configContinue, config10hz,config8gauss, configOS512);
+    setMode(configContinue, config200hz,config8gauss, configOS512);
     writeReg(config2, 0x41);
-        uint8_t data1[7] = {
-        static_cast<uint8_t>(xLSB)
-    };
+//        uint8_t data1[7] = {
+//        static_cast<uint8_t>(xLSB)
+//    };
 //    uint8_t data2[7] = {};
-    bus.write(address, data1, 1);
-    bus.read(address, data1, 6);
-    int16_t x = data1[0];
-    x |= data1[1] << 8;
-    int16_t y = data1[2];
-    y |= data1[3] << 8;
-    int16_t z = data1[4];
-    z |= data1[5] << 8;
+    int16_t x = 0;
+    int16_t y = 0;
+    int16_t z = 0;
+
+    while(x == 0 && y == 0 && z == 0){
+        readV(&x, &y, &z);
+/*        bus.write(address, data1, 1);
+        bus.read(address, data1, 6);
+        x = data1[0];
+        x |= data1[1] << 8;
+        y = data1[2];
+        y |= data1[3] << 8;
+        z = data1[4];
+        z |= data1[5] << 8;*/
+        
+    }
     
     xMin = xMax = x;
     yMin = yMax = y;
@@ -37,8 +57,8 @@ void qmc5883l::init(){
     
 }
 
-void qmc5883l::setMode(uint16_t mode,uint16_t odr,uint16_t rng,uint16_t osr){
-    writeReg(config, mode|odr|rng|osr);
+void qmc5883l::setMode(uint16_t mode,uint16_t rate,uint16_t range,uint16_t osr){
+    writeReg(config, mode|rate|range|osr);
 }
 
 void qmc5883l::readV(int16_t* x,int16_t* y,int16_t* z){
@@ -89,18 +109,24 @@ float qmc5883l::heading(int16_t* x,int16_t* y,int16_t* z){
     
     float fX = static_cast<float>(*x) - (xMax+xMin)/2;
     float fY = static_cast<float>(*y) - (yMax+yMin)/2;
-    hwlib::cout << "x val: " << *x << " min val: " << xMin << " max val: " << xMax << " offset: " << (xMax+xMin)/2 << " fX: " << static_cast<int>(fX) << hwlib::endl;
-    hwlib::cout << "y val: " << *y << " min val: " << yMin << " max val: " << yMax << " offset: " << (yMax+yMin)/2  << " fY: " << static_cast<int>(fY) << hwlib::endl;
+//    hwlib::cout << "x val: " << *x << " min val: " << xMin << " max val: " << xMax << " offset: " << (xMax+xMin)/2 << " fX: " << static_cast<int>(fX) << hwlib::endl;
+//    hwlib::cout << "y val: " << *y << " min val: " << yMin << " max val: " << yMax << " offset: " << (yMax+yMin)/2  << " fY: " << static_cast<int>(fY) << hwlib::endl;
+
+    hwlib::cout <<" fX: " << static_cast<int>(fX) <<  " fY: " << static_cast<int>(fY) << hwlib::endl;
     fX = fX/(xMax-xMin);
     fY = fY/(yMax-yMin);
 //    hwlib::cout << " fX: " << static_cast<int>(fX);
     
-    float h = 180.0*atan2(fX, fY)/Pi;
-    
-    
-    if(h<=0) h += 360.0;
-    hwlib::cout << " heading: " << static_cast<int>(h);
+    float h = 180.0*atan2(fY, fX)/Pi;
 
+    if(h<=0) h += 360.0;
+
+    return h;
+}
+
+float qmc5883l::headingRad(int16_t* x,int16_t* y,int16_t* z){
+    float h = heading(x, y, z);
+    h = h * Pi / 180.0;
     return h;
 }
 
@@ -122,7 +148,18 @@ void qmc5883l::updateVals(int16_t x, int16_t y,int16_t z){
     if(z > zMax){zMax = z;}
 }
 
+void qmc5883l::getTemp(int16_t* t){
+    *t = readI(tLSB);
+    *t |= readI(tMSB) << 8;
+}
+
+float qmc5883l::returnTemp(){
+    int16_t t = 0;
+    getTemp(&t);
+    return t /128;
+}
+/*
 int16_t qmc5883l::getXmin(){return xMin;}
 int16_t qmc5883l::getXmax(){return xMax;}
 int16_t qmc5883l::getYmin(){return yMin;}
-int16_t qmc5883l::getYmax(){return yMax;}
+int16_t qmc5883l::getYmax(){return yMax;}*/
