@@ -4,8 +4,7 @@
 bool testInit(hwlib::i2c_bus & bus){
     auto tst = qmc5883l(bus, 0x0D);
     tst.init();
-//    return static_cast<bool>(tst.readI(0x06));
-    return true;
+    return static_cast<bool>(tst.readI(0x06));
 }
 
 bool testReadV(hwlib::i2c_bus & bus){
@@ -13,9 +12,7 @@ bool testReadV(hwlib::i2c_bus & bus){
     tst.init();
     int16_t x,y,z;
     tst.readV(&x, &y, &z);
-//    hwlib::cout << +((x < 32767 && x > -32768) && (y < 32767 && y > -32768) && (z < 32767 && z > -32768)) << hwlib::endl;
-//    return ((x < 32767 && x > -32768) && (y < 32767 && y > -32768) && (z < 32767 && z > -32768));
-    return true;
+    return ((x < 32767 && x > -32768) && (y < 32767 && y > -32768) && (z < 32767 && z > -32768));
 }
 
 bool testReadHeading(hwlib::i2c_bus & bus){
@@ -23,8 +20,7 @@ bool testReadHeading(hwlib::i2c_bus & bus){
     tst.init();
     int16_t x,y,z;
     float h = tst.heading(&x, &y, &z);
-    hwlib::cout << static_cast<int>(h) << hwlib::endl;
-    return (h <= 360.0 && h >= 0.0);
+    return (static_cast<int>(h) <= 360 && static_cast<int>(h) >= 0);
 }
 
 bool testReadHeadingRad(hwlib::i2c_bus & bus){
@@ -32,7 +28,7 @@ bool testReadHeadingRad(hwlib::i2c_bus & bus){
     tst.init();
     int16_t x,y,z;
     float h = tst.heading(&x, &y, &z);
-    return true;(h <= tst.Pi*2 && h >= 0);
+    return (h <= tst.Pi*2 && h >= 0);
 }
 
 
@@ -50,7 +46,6 @@ void runTests(hwlib::i2c_bus & bus){
         } else {
             fl++;
         }
-        //hwlib::cout << static_cast<char>(arr [i]) << " : " << hwlib::endl;
 
     }
     hwlib::cout << sizeof(arr) << " tests run" << hwlib::endl;
