@@ -2,7 +2,7 @@
 //
 // File      : qmc5883l.hpp
 // Part of   : qmc5883l magnetic compass library 
-// Copyright : Patrick_Dekker@hotmail.com 2018
+// Copyright : Patrick.p.Dekker@student.hu.nl 2018
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at 
@@ -13,12 +13,22 @@
 // this file contains Doxygen lines
 /// @file
 
+/// \mainpage qmc5883l library
+/// 
+/// \author Patrick Dekker (patrick.p.dekker@student.hu.nl)
+///
+/// \copyright boost license
+///
+/// this is a library implementing an interface for the qmc5883l magnetometer module.
+///
+
 #ifndef QMC5883L_HPP
 #define QMC5883L_HPP
 
 #include "hwlib.hpp"
 #include <array>
 #include <math.h>
+
 /// \brief
 /// abstract magnetometer class
 /// \details
@@ -26,10 +36,41 @@
 /// only i2c magnetometers with 8bit registers like the qmc5883l and the hmc5883l are supported.
 class magnetometer {
 public:
+    /// \brief
+    /// initialise the chip
+    /// \details
+    /// This function initializes the chip.
     virtual void init()=0;
+    
+    /// \brief
+    /// sets configure options for the chip 
+    /// \details
+    /// It writes to the config register with the config bits.
+    /// Each two bits set another configuration.
+    /// Mode sets the chip to standby or continous mode, range to 4 different update rates, range 2 different ranges, and osr to 4 different oversampling rates.
     virtual void setMode(uint16_t mode,uint16_t rate,uint16_t range,uint16_t osr)=0;
+    
+    /// \brief
+    /// readV (read values) reads all axises of the magnetometer
+    /// \details
+    /// This function reads all magnetometer axis.
     virtual void readV(int16_t* x,int16_t* y,int16_t* z)=0;
+    
+    /// \brief
+    /// readI (read inividual) reads an inividual register.
+    /// \details
+    /// This function reads a single inividual register.
+    /// It then proceeds to return a single inividual value.
     virtual int8_t readI(uint8_t reg)=0;
+    
+    /// \brief
+    /// heading returns the heading value in radians.
+    /// \details
+    /// this function returns the heading value in radians.
+    /// The heading is relative to magnetic north.
+    /// a heading of 1/2pi radians would mean the magnetometer is pointing east granted there is no significant distrotion.
+    virtual float heading(int16_t* x,int16_t* y,int16_t* z)=0;
+
 //    virtual void setDeclination()=0;
 
 };
@@ -131,7 +172,7 @@ public:
     /// readI (read inividual) reads an inividual register.
     /// \details
     /// This function reads a single inividual register.
-    /// It then proceeds to return a single inividual value..
+    /// It then proceeds to return a single inividual value.
     int8_t readI(uint8_t reg)override;
     
     /// \brief
@@ -142,24 +183,34 @@ public:
     float azimuth(int16_t y, int16_t x);
     
     /// \brief
-    /// heading returns the heading value
-    /// \details
-    /// this function returns the heading value.
-    /// The heading is relative to magnetic north.
-    /// a heading of 90 degrees would mean the magnetometer is pointing east granted there is no significant distrotion.
-    float heading(int16_t* x,int16_t* y,int16_t* z) ;
-    
-    /// \brief
-    /// heading returns the heading value but in radians
+    /// heading returns the heading value in radians.
     /// \details
     /// this function returns the heading value in radians.
     /// The heading is relative to magnetic north.
     /// a heading of 1/2pi radians would mean the magnetometer is pointing east granted there is no significant distrotion.
-    float headingRad(int16_t* x,int16_t* y,int16_t* z);
+    float heading(int16_t* x,int16_t* y,int16_t* z) override;
     
+    /// \brief
+    /// heading returns the heading value but in degrees
+    /// \details
+    /// this function returns the heading value in degrees.
+    /// The heading is relative to magnetic north.
+    /// a heading of 90 degrees would mean the magnetometer is pointing east granted there is no significant distrotion.
+    float headingDeg(int16_t* x,int16_t* y,int16_t* z);
     
+    /// \brief
+    /// getTemp reads both remperature registers.
+    /// \details
+    /// this function reads both remperature registers.
+    /// this function is also WIP it is not compatible with the standard settings of the class.
     void getTemp(int16_t* t);
 
+    /// \brief
+    /// returnTemp returns the temperature in degrees celcius.
+    /// \details
+    /// WIP!
+    /// this function is supposed to return teh relative temperature.
+    /// The temperature sensor gain is factory calibrated but its offset has not been compensated only relative temperature is accurate.
     float returnTemp();
 
 };
