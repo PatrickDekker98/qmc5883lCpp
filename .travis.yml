@@ -1,0 +1,8 @@
+language: cpp
+
+compiler:
+    - gcc
+
+script:
+    - cd test
+    - gcc main.cpp
