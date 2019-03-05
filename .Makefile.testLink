@@ -1,0 +1,23 @@
+#############################################################################
+#
+# makefile.shared common settings and link to bmptk/makefile.inc
+#
+# (c) Wouter van Ooijen (www.voti.nl) 2017
+#
+# This file is in the public domain.
+# 
+#############################################################################
+
+
+# add Catch
+SEARCH            += ../R2D2-build/libraries/Catch2/single_include/catch2
+
+# add hwlib
+HWLIB             ?= ../R2D2-build/libraries/hwlib
+include           $(HWLIB)/Makefile.inc
+
+# set BMPTK to the bmptk subdirectory
+BMPTK := ../R2D2-build/programs/bmptk
+
+# Defer to the bmptk/Makefile.inc to do the work
+include $(BMPTK)/Makefile.inc
