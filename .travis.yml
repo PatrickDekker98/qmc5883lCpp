@@ -1,9 +1,10 @@
 language: cpp
 
 compiler:
-    - gcc
+    - arm-none-eabi-gcc
 
 install:
+    sudo apt-get install arm-none-eabi
     - git clone https://github.com/R2D2-2019/R2D2-build.git 
 
 script:
