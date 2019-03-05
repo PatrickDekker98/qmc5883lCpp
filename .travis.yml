@@ -10,7 +10,7 @@ addons:
         - lib32z1
 
 before_script:
-    - wget https://github.com/Infineon/Assets/releases/download/current/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.-d-.tar.bz2 -O /tmp/gcc-arm-none-eabi.tar.bz2
+    - wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2018q4/gcc-arm-none-eabi-8-2018-q4-major-linux.tar.bz2? -O /tmp/gcc-arm-none-eabi.tar.bz2
     - tar -xvjf /tmp/gcc-arm-none-eabi.tar.bz2
     - export PATH=$PATH:$PWD/gcc-arm-none-eabi-5_4-2016q3/bin/ 
 
