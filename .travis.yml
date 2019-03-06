@@ -1,7 +1,10 @@
-language: cpp
+notifications:
+    email: false
+
+language: c
 
 compiler:
-    - arm-none-eabi-gcc
+    - gcc
 
 addons:
     apt_packages:
@@ -9,12 +12,10 @@ addons:
         - lib32ncurses5
         - lib32z1
 
-before_script:
+install:
     - wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2018q4/gcc-arm-none-eabi-8-2018-q4-major-linux.tar.bz2? -O /tmp/gcc-arm-none-eabi.tar.bz2
     - tar -xvjf /tmp/gcc-arm-none-eabi.tar.bz2
     - export PATH=$PATH:$PWD/gcc-arm-none-eabi-5_4-2016q3/bin/ 
-
-install:
     - git clone https://github.com/R2D2-2019/R2D2-build.git 
 
 script:
